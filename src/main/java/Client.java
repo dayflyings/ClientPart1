@@ -170,8 +170,8 @@ public class Client {
         resultList.sort(Comparator.comparing(ReportElement::getStartTime));
         System.out.println("=======================================");
         System.out.println("Mean response time: " +
-                resultList.stream().mapToInt(ReportElement::getLatency).average().getAsDouble() + "\n");
-        System.out.println("Median response time: " + resultList.get(resultList.size() / 2).getLatency() + "\n");
+                resultList.stream().mapToInt(ReportElement::getLatency).average().getAsDouble() + "ms\n");
+        System.out.println("Median response time: " + resultList.get(resultList.size() / 2).getLatency() + "ms\n");
         ReportElement first = resultList.get(0);
         ReportElement last = resultList.get(resultList.size() - 1);
         double ThroughPut =
@@ -179,12 +179,16 @@ public class Client {
                         (last.getStartTime().getTime() - first.getStartTime().getTime() + last.getLatency());
         int[] sortedLatency = resultList.stream().mapToInt(ReportElement::getLatency).sorted().toArray();
         int index = (int) (sortedLatency.length * 0.99);
-        System.out.println("p99 response time: " + sortedLatency[index] + "\n");
+        System.out.println("p99 response time: " + sortedLatency[index] + "ms\n");
         System.out.println("ThroughPut: " + ThroughPut + "\n");
         System.out.println("Min response time: " +
-                resultList.stream().mapToInt(ReportElement::getLatency).min().getAsInt() + "\n");
+                resultList.stream().mapToInt(ReportElement::getLatency).min().getAsInt() + "ms\n");
         System.out.println("Max response time: " +
-                resultList.stream().mapToInt(ReportElement::getLatency).max().getAsInt() + "\n");
+                resultList.stream().mapToInt(ReportElement::getLatency).max().getAsInt() + "ms\n");
+        long firstTime = resultList.get(0).getStartTime().getTime();
+        ReportElement lastElement = resultList.get(resultList.size() - 1);
+        long lastTime = lastElement.getStartTime().getTime() + lastElement.getLatency();
+        System.out.println("Total wall time: " + (lastTime - firstTime) + "ms\n");
         System.out.println("Finish all tasks.");
     }
 }
