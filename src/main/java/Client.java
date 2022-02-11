@@ -106,8 +106,6 @@ public class Client {
         System.out.println("All phases finished.");
         System.out.println("Success requests: " + successCount.get());
         System.out.println("Failure requests: " + failureCount.get());
-        System.out.println("==================================================");
-        System.out.println("==================================================");
         writeCSV(queue);
         processData();
     }
@@ -133,7 +131,7 @@ public class Client {
     }
 
     public static void writeCSV(LinkedBlockingQueue<Record> queue) {
-        System.out.println("Write data to csv file...");
+//        System.out.println("Write data to csv file...");
         try (PrintWriter writer = new PrintWriter("report.csv")) {
             StringBuilder sb = new StringBuilder();
             sb.append("Start time,Request type,Latency,Response code\n");
@@ -145,7 +143,7 @@ public class Client {
                 sb.append(record.getStatusCode()).append("\n");
             }
             writer.write(sb.toString());
-            System.out.println("Finish write data.");
+//            System.out.println("Finish write data.");
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
@@ -168,23 +166,12 @@ public class Client {
             resultList.add(new ReportElement(startTime, parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3])));
         }
         resultList.sort(Comparator.comparing(ReportElement::getStartTime));
-        System.out.println("=======================================");
-        System.out.println("Mean response time: " +
-                resultList.stream().mapToInt(ReportElement::getLatency).average().getAsDouble() + "ms\n");
-        System.out.println("Median response time: " + resultList.get(resultList.size() / 2).getLatency() + "ms\n");
         ReportElement first = resultList.get(0);
         ReportElement last = resultList.get(resultList.size() - 1);
         double ThroughPut =
                 (double) resultList.size() /
                         (last.getStartTime().getTime() - first.getStartTime().getTime() + last.getLatency());
-        int[] sortedLatency = resultList.stream().mapToInt(ReportElement::getLatency).sorted().toArray();
-        int index = (int) (sortedLatency.length * 0.99);
-        System.out.println("p99 response time: " + sortedLatency[index] + "ms\n");
         System.out.println("ThroughPut: " + ThroughPut + "\n");
-        System.out.println("Min response time: " +
-                resultList.stream().mapToInt(ReportElement::getLatency).min().getAsInt() + "ms\n");
-        System.out.println("Max response time: " +
-                resultList.stream().mapToInt(ReportElement::getLatency).max().getAsInt() + "ms\n");
         long firstTime = resultList.get(0).getStartTime().getTime();
         ReportElement lastElement = resultList.get(resultList.size() - 1);
         long lastTime = lastElement.getStartTime().getTime() + lastElement.getLatency();
